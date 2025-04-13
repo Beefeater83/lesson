@@ -17,6 +17,6 @@ final class DefaultController extends AbstractController
     public function index(BlogRepository $blogRepository, EntityManagerInterface $em): Response
     {
 
-        return $this->redirectToRoute('app_blog_index');
+        return new Response();
     }
 }
