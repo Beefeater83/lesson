@@ -7,6 +7,7 @@ use App\Entity\Category;
 use App\Form\DataTransformer\TagTransformer;
 use App\Repository\CategoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -15,7 +16,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class BlogType extends AbstractType
 {
-    public function __construct(private readonly TagTransformer $tagTransformer)
+    public function __construct(
+        private readonly TagTransformer $tagTransformer,
+        private readonly Security $security)
     {
 
     }
@@ -34,17 +37,20 @@ class BlogType extends AbstractType
             ])
             ->add('text', TextareaType::class, [
                 'required' => true,
-            ])
-            ->add('category', EntityType::class, [
-                'class' => Category::class,
-                'query_builder' => function (CategoryRepository $repository) {
-                return $repository->createQueryBuilder('c')->orderBy('c.name', 'ASC');
-                },//тут можно из БД для выбора показывать не все или сортировать
-                'choice_label' => 'name',
-                'required' => false,
-                'placeholder' => 'Виберіть категорію',
-            ])
-            ->add('tags', TextType::class, [
+            ]);
+            if($this->security->isGranted('ROLE_ADMIN')){
+                $builder ->add('category', EntityType::class, [
+                    'class' => Category::class,
+                    'query_builder' => function (CategoryRepository $repository) {
+                        return $repository->createQueryBuilder('c')->orderBy('c.name', 'ASC');
+                    },
+                    'choice_label' => 'name',
+                    'required' => false,
+                    'placeholder' => 'Виберіть категорію',
+                ]);
+            }
+
+           $builder ->add('tags', TextType::class, [
                 'label' => 'Теги',
                 'required' => false,
             ])

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BlogRepository::class)]
@@ -34,6 +35,18 @@ class Blog
     #[ORM\InverseJoinColumn(name: 'tag_id', referencedColumnName: 'id', unique: true)]
     #[ORM\ManyToMany(targetEntity: Tag::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $tags;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $text = null;
+
+    public function __construct(UserInterface|User $user)
+    {
+        $this->user = $user;
+    }
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private User|null $user = null;
 
     public function getTags(): Collection
     {
@@ -75,9 +88,6 @@ class Blog
         return $this;
     }
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $text = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -105,5 +115,15 @@ class Blog
         $this->text = $text;
 
         return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): void
+    {
+        $this->user = $user;
     }
 }

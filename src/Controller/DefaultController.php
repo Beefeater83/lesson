@@ -16,7 +16,6 @@ final class DefaultController extends AbstractController
     #[Route('/', name: 'blog_default')]
     public function index(BlogRepository $blogRepository, EntityManagerInterface $em): Response
     {
-
-        return new Response();
+        return $this->render('default/index.html.twig', ['blogs' => $blogRepository->getBlogs()]);
     }
 }
