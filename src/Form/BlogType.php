@@ -4,8 +4,10 @@ namespace App\Form;
 
 use App\Entity\Blog;
 use App\Entity\Category;
+use App\Entity\User;
 use App\Form\DataTransformer\TagTransformer;
 use App\Repository\CategoryRepository;
+use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
@@ -47,6 +49,14 @@ class BlogType extends AbstractType
                     'choice_label' => 'name',
                     'required' => false,
                     'placeholder' => 'Виберіть категорію',
+                ])->add('user', EntityType::class, [
+                    'class' => User::class,
+                    'query_builder' => function (UserRepository $repository) {
+                        return $repository->createQueryBuilder('u')->orderBy('u.id', 'ASC');
+                    },
+                    'choice_label' => 'email',
+                    'required' => false,
+                    'placeholder' => 'Выберите пользователя',
                 ]);
             }
 
