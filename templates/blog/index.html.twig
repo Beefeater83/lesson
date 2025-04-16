@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for blog in blogs %}
+        {% for blog in pagination %}
             <tr>
                 <td>{{ blog.id }}</td>
                 <td>{{ blog.title }}</td>
@@ -39,6 +39,9 @@
         {% endfor %}
         </tbody>
     </table>
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
     {% if is_granted('ROLE_ADMIN') %}
         <a href="{{ path('app_blog_new') }}">Create new</a>
     {% else %}

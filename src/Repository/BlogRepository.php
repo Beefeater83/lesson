@@ -26,10 +26,10 @@ class BlogRepository extends ServiceEntityRepository
     }
     public function findByBlogFilter(BlogFilter $blogFilter)
     {
-        $blogs = $this->createQueryBuilder('b');
+        $blogs = $this->createQueryBuilder('b')->where('1 = 1');
 
         if($blogFilter->getUser()){
-            $blogs->where('b.user = :user')
+            $blogs->andWhere('b.user = :user')
                 ->setParameter('user', $blogFilter->getUser());
         }
 
@@ -37,7 +37,7 @@ class BlogRepository extends ServiceEntityRepository
             $blogs->andWhere('b.title LIKE :title')
                 ->setParameter('title', '%'.$blogFilter->getTitle().'%');
         }
-        return $blogs->getQuery()->getResult();
+        return $blogs;
     }
 
 
